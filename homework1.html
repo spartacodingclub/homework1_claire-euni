@@ -13,6 +13,11 @@
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 
     <script>
+        function checkPhone(n) {
+            var regex = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})[-][0-9]{3,4}[-][0-9]{4}$/;
+            return regex.test(n);
+        }
+
         function order() {
             let name = $('#orderName').val();
             let address = $('#orderAdd').val();
@@ -30,6 +35,9 @@
             } else if (phoneNum == "") {
                 alert("전화번호를 입력해주세요");
                 $('#orderPhone').focus();
+                return
+            } else if (checkPhone(phoneNum) != true) {
+                alert("번호를 올바른 형식(010-0000-0000)으로 입력해주세요");
                 return
             } else if (selectOpt == "") {
                 alert("수량을 입력해주세요");
@@ -88,7 +96,7 @@
 
         </div>
 
-        <button type="button" class="btn btn-primary" onclick="order()"
+        <button type="button" class="btn btn-primary" onclick="order()" onclick="checkPhone()"
             style="padding-left:20px; padding-right:20px">주문하기</button>
     </div>
 </body>
