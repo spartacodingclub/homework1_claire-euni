@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css?family=Poor+Story&display=swap" rel="stylesheet">
-    <link href="{{ url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.js"
@@ -18,7 +18,15 @@
             return regex.test(n);
         }
 
+
+        $(document).ready(function () {
+            $('#orders-box').html('');
+            listing();
+
+        });
+
         function order() {
+
             let name = $('#orderName').val();
             let address = $('#orderAdd').val();
             let phoneNum = $('#orderPhone').val();
@@ -44,36 +52,21 @@
                 $('#selectBox').focus();
             } else {
                 alert("주문 완료");
-            }
-        }
 
-        $(document).ready(function () {
-            $('#orders-box').html('');
-            listing();
-
-        });
-
-        function put_order() {
-            let name = $('#orderName').val();
-            let address = $('#orderAdd').val();
-            let phoneNum = $('#orderPhone').val();
-            let selectOpt = $('#selectBox').val();
-
-            let data_input = {
-                'name_give': name,
-                'count_give': selectOpt,
-                'add-give': address,
-                'phone_give': phoneNum
             }
 
-            $.ajax({
+               $.ajax({
                 type: 'POST',
                 url: '/orders',
-                data: data_input,
+                data: {name_give:name, count_give:selectOpt, add_give:address, phone_give:phoneNum},
                 success: function (res) {
                     if (res['result'] == 'success') {
                         alert(res['msg']);
-                        window.locaton.reload();
+                         $('#orderName').val('');
+                         $('#orderAdd').val('');
+                         $('#orderPhone').val('');
+                         $('#selectBox').val('');
+                        window.location.reload();
 
                     }
 
@@ -84,42 +77,38 @@
 
         }
 
-        function listing() {
-            $.ajax({
-                type: 'GET',
-                url: '/orders',
-                data: {},
-                success: function (res) {
-                    if (res['result' == 'success']) {
-                        let result = res['orders'];
-                        for (let i = 0; i < result.length; i++) {
-                            let list = result[i];
-                            let name_final = list['name'];
-                            let count_final = list['count'];
-                            let address_final = list['address'];
-                            let phone_final = list['phone'];
 
-                            make_card(name_final, count_final, address_final, phone_final);
-                        }
-                    }
+    function listing() {
+        $.ajax({
+            type: 'GET',
+            url: '/orders',
+            data: {},
+            success: function (res) {
+                let list = res['orders'];
+                for(let i =0; i<list.length; i++){
+                    let fin = list[i];
+
+                    make_card(fin['name'],fin['count'],fin['address'],fin['phone']);
+
                 }
 
+                    }
+
+                });
+            }
 
 
-            });
-        }
-
-        function make_card(a, b, c, d){
-            let temp_html = '<tr>\
-                                <td>' + a + '</td>\
-                                <td>' + b + ' </td>\
-                                <td>' + c + ' </td>\
-                                <td>' + d + ' </td>\
-                                </tr>';
-            $('#orders-box').append(temp_html);
+    function make_card(a, b, c, d) {
+        let temp_html = '<tr>\
+                        <td>' + a + '</td>\
+                        <td>' + b + ' </td>\
+                        <td>' + c + ' </td>\
+                        <td>' + d + ' </td>\
+                        </tr>';
+        $('#orders-box').append(temp_html);
 
 
-        }
+    }
 
     </script>
 
